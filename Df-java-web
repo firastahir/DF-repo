@@ -1,0 +1,22 @@
+FROM openshift/rhel7:latest
+
+MAINTAINER firas.taher@bestbuy.com
+
+WORKDIR /opt
+COPY gs-serving-web-content-0.1.0.jar /opt/
+
+RUN yum update -y \
+  && yum install -y java-11-openjdk-devel.x86_64 \
+  && yum install -y net-tools \
+  && yum install -y bind-utils \
+  && yum install -y curl \
+  && yum install -y links \
+  && yum clean all \
+  && rm -rf /var/cache/yum/*
+
+# expose server port accept connections
+EXPOSE 8080
+
+WORKDIR /opt 
+         
+CMD ["sh", "-c", "java -jar gs-serving-web-content-0.1.0.jar"]

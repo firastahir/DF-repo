@@ -1,0 +1,32 @@
+FROM openshift/rhel7:latest
+USER root
+MAINTAINER thanmai.jaagadeesh@bestbuy.com
+
+WORKDIR /opt
+COPY auditpublisheragent.jar /opt/
+ENV jvm_args " "
+ENV application_args " "
+
+
+RUN yum update -y \
+  && yum install -y less java-11-openjdk-devel.x86_64 \
+  && yum install -y less net-tools \
+  && yum install -y less bind-utils \
+  && yum install -y less telnet \
+  && yum install -y less iputils \
+  && yum install -y less lsof \
+  && yum install -y less traceroute \
+  && yum install -y hostname \
+  && yum clean all \
+  && rm -rf /var/cache/yum/* \
+  && chmod 777 /opt \
+  && chmod 777 /opt/* \
+  && ls -lrth /opt/*
+
+WORKDIR /opt/   
+  
+EXPOSE 8081 8080
+  
+
+  
+CMD ["sh", "-c", "java  $jvm_args  -jar auditpublisheragent.jar $application_args"]

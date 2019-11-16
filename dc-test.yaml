@@ -1,0 +1,17 @@
+kind: "DeploymentConfig"
+apiVersion: "v1"
+metadata:
+  name: "frontend"
+spec:
+  template: 
+    metadata:
+      labels:
+        name: "frontend"
+    spec:
+      containers:
+        - name: "helloworld"
+          image: "docker-registry.default.svc:5000/oms-co-dt-bdc-na/rhel7-test"
+  replicas: 5 
+  selector:
+    name: "frontend"
+  

@@ -1,0 +1,26 @@
+FROM openshift/rhel7:latest
+
+MAINTAINER thanmai.jaagadeesh@bestbuy.com
+
+WORKDIR /opt
+COPY tecmintapp.jar /opt/
+ENV jvm_args " "
+ENV application_args " "
+
+
+RUN yum update -y \
+  && yum install -y less java-11-openjdk-devel.x86_64 \
+  && yum install -y less net-tools \
+  && yum install -y less bind-utils \
+  && yum clean all \
+  && rm -rf /var/cache/yum/* \
+  && chmod 777 /opt \
+  && chmod 777 /opt/* \
+  && ls -lrth /opt/*
+
+WORKDIR /opt/   
+  
+EXPOSE 8081 8080
+  
+  
+CMD ["sh", "-c", "java -jar tecmintapp.jar"]

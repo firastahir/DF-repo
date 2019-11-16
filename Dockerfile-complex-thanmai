@@ -1,0 +1,58 @@
+FROM openshift/rhel7:latest
+
+MAINTAINER thanmai.jagadeesh@bestbuy.com
+
+ENV PATH="/opt/yantra/yntadmin/java/java/bin:/opt/yantra/eoprt01/smcfs93local/bin:${PATH}"
+ENV JAVA_HOME="/opt/yantra/yntadmin/java"
+ENV KEYSTORE_FILE=/opt/yantra/yntadmin/SSL/appclient_oms.jks
+ENV KEYSTORE_PASS_PHRASE_FILE=/opt/yantra/yntadmin/SSL/appclient_pass_oms
+ENV TRUSTSTORE_FILE=/opt/yantra/yntadmin/SSL/was_truststore_oms.jks
+ENV TRUSTSTORE_PASS_PHRASE_FILE=/opt/yantra/yntadmin/SSL/was_truststore_pass_oms
+ENV IBM_JAVACOREDIR=/opt/logs/yantra/eoprt01/dump
+
+RUN  yum update -y \
+  && yum install -y less net-tools \
+  && yum install -y less bind-utils \
+  && yum install -y less telnet \
+  && yum install -y less iputils \
+  && yum install -y less lsof \
+  && yum install -y less traceroute \
+  && yum clean all \
+  && mkdir /opt/yantra/ \
+  && mkdir /opt/yantra/yntadmin/ \
+  && mkdir /opt/yantra/yntadmin/java/ \
+  && mkdir /opt/logs/ \
+  && mkdir /opt/logs/yantra/ \
+  && mkdir /opt/logs/yantra/eoprt01/ \
+  && mkdir /opt/logs/yantra/eoprt01/dump/ \
+  && mkdir /opt/yantra/eoprt01/ \
+  && curl -k http://dtl01omsat002:8081/artifactory/TEST/java/jdk1.7.0_65.tar.gz  | tar -xzf - -C /opt/yantra/yntadmin/java \
+  && curl -k http://dtl01omsat002:8081/artifactory/INSTALL_DIR/smcfs93local7.tar  | tar -xvf - -C /opt/yantra/eoprt01/ \
+  && curl -k http://dtl01omsat002:8081/artifactory/INSTALL_DIR/SSL.tar  | tar -xvf - -C /opt/yantra/yntadmin/ \
+  && curl -ks http://dtl01omsat002:8081/artifactory/INSTALL_DIR/VM_ARGUMENTS.txt > /opt/yantra/eoprt01/smcfs93local/VM_ARGUMENTS.txt \
+  && chmod 777 /opt/yantra/eoprt01/smcfs93local/* \
+  && chmod 777 /opt/yantra/eoprt01/smcfs93local/bin/* \
+  && chmod 777 /opt/logs \
+  && chmod 777 /opt/logs/yantra \
+  && chmod 777 /opt/logs/yantra/eoprt01 \
+  && chmod 777 /opt/logs/yantra/eoprt01/dump \
+  && mkdir /opt/yantra/eoprt01/smcfs93local/tmp/ \
+  && mkdir /opt/yantra/eoprt01/smcfs93local/tmp/ehcache/ \
+  && chmod 777 /opt/yantra/eoprt01/smcfs93local/tmp \
+  && chmod 777 /opt/yantra/eoprt01/smcfs93local/tmp/ehcache \
+  && chmod 777 /opt/yantra/eoprt01/smcfs93local/mq/eoprt01/integration \
+  && chmod 777 /opt/yantra/eoprt01/smcfs93local/bin \
+  && chmod 777 /opt/yantra/eoprt01/smcfs93local \
+  && chmod 777 /opt/yantra/yntadmin \ 
+  && chmod 777 /opt/yantra/yntadmin/SSL 
+
+
+WORKDIR /opt/yantra/eoprt01/smcfs93local
+
+EXPOSE 59506
+
+CMD exec /opt/yantra/yntadmin/java/bin/java ${VM_PARAMS} 2>&1
+
+
+##IF YOU NEED LOG FILE
+##CMD exec /opt/yantra/yntadmin/java/bin/java ${VM_PARAMS}  >> /opt/logs/yantra/eoprt01/bestbuy_${AGENT_NAME}.log 2>&1
